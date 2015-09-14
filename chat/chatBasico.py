@@ -13,6 +13,7 @@ user = "banersjk"
 password = "zxmfkmk126"
 
 conectadosJid = []
+conectadosRaw = []#Todo en xml de pechaso
 conectadosName = []
 conectadosEstado = []
 conectadosChamp = []
@@ -59,6 +60,7 @@ def presence_handler(conn, event):
             conectadosJid.append(jid)
             conectadosName.append(name)
             
+            if 
             if "gameStatus" in status["body"]:
                 conectadosEstado.append(status["body"]["gameStatus"])
             else:
@@ -72,7 +74,7 @@ def presence_handler(conn, event):
             else:
                 conectadosTiempo.append(None)
             if "queueType" in status["body"]:
-                conectadosTipoDeCola.append(status["body"]["timeStamp"])
+                conectadosTipoDeCola.append(status["body"]["queueType"])
             else:
                 conectadosTiempo.append(None)
             if "championMasteryScore" in status["body"]:
