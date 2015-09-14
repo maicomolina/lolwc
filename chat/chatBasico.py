@@ -60,7 +60,7 @@ def presence_handler(conn, event):
             conectadosJid.append(jid)
             conectadosName.append(name)
             
-            if 
+            conectadosRaw.append()
             if "gameStatus" in status["body"]:
                 conectadosEstado.append(status["body"]["gameStatus"])
             else:
