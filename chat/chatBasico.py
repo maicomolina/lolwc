@@ -242,8 +242,9 @@ conn.send(pres)
 
 def worker(conn):
     global userJid
-    try:
-        while True:
+    while True:    
+        try:
+            
             cmd = raw_input("Ingrese contacto y mensaje para enviar\n>")
             cmd = cmd.split("-")
             msg = cmd[1]
@@ -260,9 +261,9 @@ def worker(conn):
                 message.setAttr('type', 'chat')
                 message.setAttr('from', userJid)
                 conn.send(message)
-    except:
-        print("#----ERROR DE WORKER----#")
-        return
+        except KeyboardInterrupt:
+            print("#----ERROR DE WORKER----#")
+            break
 t = threading.Thread(target=worker, args=(conn,))
 t.start()
 
