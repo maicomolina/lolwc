@@ -57,31 +57,38 @@ def home(request):
         freeChampsID.append(freeChamps['champions'][j]['id'])
         
     #-->Partidas
-        partida = riotWatcher.get_featured_games()
-        tiempoSec = partida['gameList'][0]['gameLength']
-        tiempo = tiempoSec/60
-        segundos =  tiempoSec%60
-        champFGc = []
-        champFGd = []
-        for u in range (len(partida['gameList'][0]['participants'])):
-            if partida['gameList'][0]['participants'][u]['teamId'] == 100 :
-                champFGc.append(partida['gameList'][0]['participants'][u]['championId'])
-            else:
-                champFGd.append(partida['gameList'][0]['participants'][u]['championId'])
+    tiempoSec = [0,0,0,0,0]
+    minutos = [0,0,0,0,0]
+    segundos = [0,0,0,0,0]
+    champPartida = []
+    try:
+        for k in range(5):
+            champFGc = []
+            champFGd = []
+            partida = riotWatcher.get_featured_games()
+            tiempoSec[k] = partida['gameList'][k]['gameLength']
+            minutos[k] = tiempoSec[k] /60
+            segundos[k] =  tiempoSec[k]%60
+            for u in range (len(partida['gameList'][k]['participants'])):
+                if partida['gameList'][k]['participants'][u]['teamId'] == 100 :
+                    champFGc.append(partida['gameList'][k]['participants'][u]['championId'])
+                else:
+                    champFGd.append(partida['gameList'][k]['participants'][u]['championId'])
+            champPartida.append(champFGd)
+            champPartida.append(champFGc)
+    except (LoLException):
+        print 'mierda'
 
-    
-        
-    #-->Historial
-    historial = riotWatcher.get_match_history(me['id'])
+
 
 
     return render_to_response('home.html', {'nombre':nombre, 'liga':liga, 'division':division,
                                             'kills':kills, 'assists':assists,
                                             'wins':wins, 'losses':losses,
-                                            'freeChampsID':freeChampsID, 'tiempo':tiempo,
+                                            'freeChampsID':freeChampsID, 'minutos':minutos,
                                             'segundos':segundos,
-                                            'champFGc':champFGc, 'champFGd':champFGd
-                                           }, 
+                                            'champFGc':champFGc, 'champFGd':champFGd, 'champPartida':champPartida,
+                                            }, 
                              context)
 
 def most_common(L):
