@@ -16,39 +16,49 @@ riotWatcher = RiotWatcher("98f4f837-c794-4a58-bcb7-b436873a03d2", default_region
 i = 0
 
 def home(request):
-    x = 0
+
+    wins = 0
+    losses = 0
+    assists = 0
+    kills = 0
+    deaths = 0
     free_to_play = True
     context = RequestContext(request)
     #-->Nombre Summoner
-    me = riotWatcher.get_summoner(name='sadjockerking')
+    me = riotWatcher.get_summoner(name='pipacuc')
     nombre = me['name']
 #426174
     try:
         #-->Liga
         ligaInfo = riotWatcher.get_league_entry([str(me['id'])])
-        liga = ligaInfo['426174'][0]['tier']
+        liga = ligaInfo[str(me['id'])][0]['tier']
         #-->Division
-        division = ligaInfo['426174'][0]['entries'][0]['division']
+        division = ligaInfo[str(me['id'])][0]['entries'][0]['division']
     except(LoLException):
         #-->En caso de no rankear
         liga = "unRanked"
         division = "unRanked"
     try:
         #-->Info como le va en rankeds
-        summary = riotWatcher.get_stat_summary(me['id'])
+        rankedst = riotWatcher.get_ranked_stats(me['id'])
         
-        for x in range(len(summary['playerStatSummaries'])):
-            if (summary['playerStatSummaries'][x]['playerStatSummaryType'] == "RankedSolo5x5" ):
-                break
-        kills = summary['playerStatSummaries'][x]['aggregatedStats']['totalChampionKills']
-        assists = summary['playerStatSummaries'][x]['aggregatedStats']['totalAssists']
-        wins = summary['playerStatSummaries'][x]['wins']
-        losses = summary['playerStatSummaries'][x]['losses']
-    except(IndexError):
+        for x in range(len(rankedst['champions'])):
+            wins += rankedst['champions'][x]['stats']['totalSessionsWon']
+            losses += rankedst['champions'][x]['stats']['totalSessionsLost']
+            assists += rankedst['champions'][x]['stats']['totalAssists']
+            kills += rankedst['champions'][x]['stats']['totalChampionKills']
+            deaths += rankedst['champions'][x]['stats']['totalDeathsPerSession']
+    except(IndexError, LoLException):
         kills = '0'
         assists = '0'
         wins = '0'
         losses = '0'
+        deaths = '0'
+        
+        mostPlayedChamp = '0'
+        try:
+            for x in range(len(rankedst['champions'])):
+                mostPlayedChamp = 
     
     #-->Free Champs
     freeChamps = riotWatcher.get_all_free_champions()
@@ -77,13 +87,14 @@ def home(request):
             champPartida.append(champFGd)
             champPartida.append(champFGc)
     except (LoLException):
-        print 'mierda'
+        print 'error'
 
 
 
 
     return render_to_response('home.html', {'nombre':nombre, 'liga':liga, 'division':division,
                                             'kills':kills, 'assists':assists,
+                                            'deaths':deaths,
                                             'wins':wins, 'losses':losses,
                                             'freeChampsID':freeChampsID, 'minutos':minutos,
                                             'segundos':segundos,
