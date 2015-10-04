@@ -12,10 +12,8 @@ import threading
 conn = xmpp.Client("pvp.net")
 server = "la2"
 msg = False
-#user = "mateosss"
-#password = "Cc:40987366"
-user = "banersjk"
-password = "zxmfkmk126"
+user = "rayder38"
+password = "caca123"
 
 userJid = 'sum426174@pvp.net'
 statusUser = OrderedDict([(u'body', OrderedDict([(u'profileIcon', u'612'), (u'level', u'30'), (u'wins', u'101'), (u'leaves', u'33'), (u'odinWins', u'0'), (u'odinLeaves', u'0'), (u'queueType', None), (u'rankedLosses', u'0'), (u'rankedRating', u'0'), (u'tier', u'DIAMOND'), (u'rankedSoloRestricted', u'false'), (u'championMasteryScore', u'967'), (u'statusMsg', u'FAFITA 2x1'), (u'rankedLeagueName', u"Tu mama en tanga's league"), (u'rankedLeagueDivision', u'XL'), (u'rankedLeagueTier', u'BRONZE'), (u'rankedLeagueQueue', u'RANKED_SOLO_5x5'), (u'rankedWins', u'9999'), (u'skinname', u'Riven'), (u'gameQueueType', u'NORMAL'), (u'gameStatus', u'inGame'), (u'timeStamp', u'1442268254517')]))])
@@ -54,7 +52,7 @@ def message_handler(conn, msg):
     if unicode(msg) != "None":
         print("#----Message----#")
         print(unicode(msg))
-        user = roster.getName(unicode(msg.getFrom())) 
+        user = roster.getName(unicode(msg.getFrom()))
         text = msg.getBody()
         print "[%s] %s" % (user, text)
         reply = msg.buildReply("[ECHO] %s" % (text))
@@ -71,8 +69,8 @@ def presence_handler(conn, event):
     statusRaw = roster.getStatus(jid)
     chatStatus = roster.getShow(jid)
     if statusRaw != None:
-        status = xmltodict.parse(statusRaw,encoding='utf-8')    
-        
+        status = xmltodict.parse(statusRaw,encoding='utf-8')
+
         if not jid in conectadosJid:
             conectadosRaw.append(statusRaw)
             conectadosJid.append(jid)
@@ -221,15 +219,15 @@ def presence_handler(conn, event):
                 #conectadosLiga.pop(pos)
                 #conectadosDivision.pop(pos)
                 #conectadosLigaNombre.pop(pos)
-                #conectadosVictorias.pop(pos)      
-        
+                #conectadosVictorias.pop(pos)
+
 def iq_handler(conn, event):
     print("#----Iq----#")
     print(unicode(event))
 
 def disconnect_handler(conn, event):
     print("#----Desconectado----#")
-    
+
 roster = conn.getRoster()
 conn.RegisterHandler("message", message_handler)
 conn.RegisterHandler("presence", presence_handler)
@@ -242,9 +240,9 @@ conn.send(pres)
 
 def worker(conn):
     global userJid
-    while True:    
+    while True:
         try:
-            
+
             cmd = raw_input("Ingrese contacto y mensaje para enviar\n>")
             cmd = cmd.split("-")
             msg = cmd[1]
@@ -286,7 +284,7 @@ while conn.isConnected():
                 #minutos = unicode((time.time() - float(conectadosTiempo[i][0:10]+"."+conectadosTiempo[i][10:13]))/60)+" minutos"
             #else:
                 #minutos = "---"
-            
+
             #print("\tDurante: "+ minutos + " > " + unicode(conectadosTiempo[i]))
             #print("\tIcono: "+unicode(conectadosIcono[i]))
             #print("\tMensaje: "+unicode(conectadosMensaje[i]))
