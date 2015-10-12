@@ -34,7 +34,7 @@ def profile(request, summoner = None, idSum = None, region = None, info = None):
             print(valores)
         print(valores)
         return HttpResponse(json.dumps(valores), content_type="application/json")
-    return render_to_response('profile.html',{"summoner":summoner,"idSum":idSum,"region":region,"info":info},context)
+    return render_to_response('profile.html',{"summoner":str(summoner),"idSum":str(idSum),"region":str(region),"info":str(info)},context)
 
 
 def chat(request, region = None, friend = None):
