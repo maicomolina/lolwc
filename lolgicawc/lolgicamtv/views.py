@@ -54,46 +54,46 @@ def home(request):
 #426174
 #-- Informacion del summoner
 def summonerInfo():
-    wins = 0
-    losses = 0
-    assists = 0
-    kills = 0
-    deaths = 0
     try:
-        nombre = me['name']
+        summonerName = me['name']
         #-->Liga
         ligaInfo = riotWatcher.get_league_entry([str(me['id'])])
-        liga = ligaInfo[str(me['id'])][0]['tier']
+        summonerLeage = ligaInfo[str(me['id'])][0]['tier']
         #-->Division
-        division = ligaInfo[str(me['id'])][0]['entries'][0]['division']
+        summonerDivision = ligaInfo[str(me['id'])][0]['entries'][0]['division']
     except(LoLException):
         #-->En caso de no rankear
-        liga = "unRanked"
-        division = "unRanked"
+        summonerLeage = "unRanked"
+        summonerDivision = "unRanked"
     try:
             #-->Info como le va en rankeds
-        assists = 0.0
-        kills = 0.0
-        deaths = 0.0
+        summonerAssists = 0.0
+        summonerKills = 0.0
+        summonerDeaths = 0.0
         wins = rankedst['champions'][x]['stats']['totalSessionsWon']
         losses = rankedst['champions'][x]['stats']['totalSessionsLost']
-        assists = rankedst['champions'][x]['stats']['totalAssists']/ rankedst['champions'][x]['stats']['totalSessionsPlayed']
-        kills = rankedst['champions'][x]['stats']['totalChampionKills'] / rankedst['champions'][x]['stats']['totalSessionsPlayed']
-        deaths = rankedst['champions'][x]['stats']['totalDeathsPerSession']/ rankedst['champions'][x]['stats']['totalSessionsPlayed']
+        summonerAssists = rankedst['champions'][x]['stats']['totalAssists']/ rankedst['champions'][x]['stats']['totalSessionsPlayed']
+        summonerKills = rankedst['champions'][x]['stats']['totalChampionKills'] / rankedst['champions'][x]['stats']['totalSessionsPlayed']
+        summonerDeaths = rankedst['champions'][x]['stats']['totalDeathsPerSession']/ rankedst['champions'][x]['stats']['totalSessionsPlayed']
         totalPartidas = wins + losses
-        winsPor = totalPartidas*wins/losses
+        summonerWinrate = totalPartidas*wins/losses
     except(IndexError, LoLException, KeyError):
-        kills = '0'
-        assists = '0'
+        summonerKills = '0'
+        summonerAssists = '0'
         wins = '0'
         losses = '0'
-        deaths = '0'
-    return {
-            
-                                            'nombre':nombre, 'liga':liga, 'division':division,
-                                            'kills':kills, 'assists':assists,
-                                            'deaths':deaths,
-                                            'wins':wins, 'losses':losses}
+        summonerDeaths = '0'
+    summonerInf = {}
+    summonerInf['summonerName'] = summonerName
+    summonerInf['summonerLeage'] = summonerLeage
+    summonerInf['summonerDivision'] = summonerDivision
+    summonerInf['summonerKills'] = summonerKills
+    summonerInf['summonerAssists'] = summonerAssists
+    summonerInf['summonerDeaths'] = summonerDeaths
+    summonerInf['summonerWinrate'] = summonerWinrate
+    print "listo"
+    print summonerInf
+    return summonerInf
 
 
 #-->Champion mas usado
@@ -101,89 +101,87 @@ def mostPlayedChampInfo():
 
     try:
         champWinPorcentaje = 0.0
-        maxPartidasChamp =  0
+        mostPlayedChampMatchesCount =  0
         mostPlayedChamp = 0
         for q in range(x):
             partidaChampx = rankedst['champions'][q]['stats']['totalSessionsPlayed']
-            if (maxPartidasChamp <= partidaChampx):
-                maxPartidasChamp = partidaChampx
+            if (mostPlayedChampMatchesCount <= partidaChampx):
+                mostPlayedChampMatchesCount = partidaChampx
                 maxChampPos = q
                 mostPlayedChamp = rankedst['champions'][q]['id']
 
-        maxPartidasChamp = float(maxPartidasChamp)
-        champKills = rankedst['champions'][maxChampPos]['stats']['totalChampionKills']
-        champDeaths = rankedst['champions'][maxChampPos]['stats']['totalDeathsPerSession']
-        champAssists = rankedst['champions'][maxChampPos]['stats']['totalAssists']
-        champGoldEarned = rankedst['champions'][maxChampPos]['stats']['totalGoldEarned'] / maxPartidasChamp
-        champGoldEarned = round(champGoldEarned, 2)
-        champMinionsKills = rankedst['champions'][maxChampPos]['stats']['totalMinionKills'] / maxPartidasChamp
-        champWinPorcentaje =  rankedst['champions'][maxChampPos]['stats']['totalSessionsWon'] / maxPartidasChamp * 100
+        mostPlayedChampMatchesCount = float(mostPlayedChampMatchesCount)
+        mostPlayedChampKills = rankedst['champions'][maxChampPos]['stats']['totalChampionKills']
+        mostPlayedChampDeaths = rankedst['champions'][maxChampPos]['stats']['totalDeathsPerSession']
+        mostPlayedChampAssist = rankedst['champions'][maxChampPos]['stats']['totalAssists']
+        mostPLayedChampGold = rankedst['champions'][maxChampPos]['stats']['totalGoldEarned'] / mostPlayedChampMatchesCount
+        mostPLayedChampGold = round(mostPLayedChampGold, 2)
+        mostPlayedChampCs = rankedst['champions'][maxChampPos]['stats']['totalMinionKills'] / mostPlayedChampMatchesCount
+        champWinPorcentaje =  rankedst['champions'][maxChampPos]['stats']['totalSessionsWon'] / mostPlayedChampMatchesCount * 100
         champWinPorcentaje = round(champWinPorcentaje, 2)
-        champWins = rankedst['champions'][maxChampPos]['stats']['totalSessionsWon']
-        champLossesPorcentaje = rankedst['champions'][maxChampPos]['stats']['totalSessionsLost'] / maxPartidasChamp * 100
-        champLossesPorcentaje = round(champLossesPorcentaje, 2)
-        champLosses = rankedst['champions'][maxChampPos]['stats']['totalSessionsLost']
-        maxPartidasChamp = int(maxPartidasChamp)
+        mostPlayedChampMatchesWinCount = rankedst['champions'][maxChampPos]['stats']['totalSessionsWon']
+        mostPlayedChampMatchesLoseCountPorcentaje = rankedst['champions'][maxChampPos]['stats']['totalSessionsLost'] / mostPlayedChampMatchesCount * 100
+        mostPlayedChampMatchesLoseCountPorcentaje = round(mostPlayedChampMatchesLoseCountPorcentaje, 2)
+        mostPlayedChampMatchesLoseCount = rankedst['champions'][maxChampPos]['stats']['totalSessionsLost']
+        mostPlayedChampMatchesCount = int(mostPlayedChampMatchesCount)
 
     except(LoLException, KeyError):
-        champKills = 0
-        champDeaths = 0
-        champAssists = 0
-        champGoldEarned = 0
-        champMinionsKills = 0
+        mostPlayedChampKills = 0
+        mostPlayedChampDeaths = 0
+        mostPlayedChampAssist = 0
+        mostPLayedChampGold = 0
+        mostPlayedChampCs = 0
         champWinPorcentaje = 0
-        champWins = 0
-        champLossesPorcentaje = 0
-        champLosses = 0
+        mostPlayedChampMatchesWinCount = 0
+        mostPlayedChampMatchesLoseCountPorcentaje = 0
+        mostPlayedChampMatchesLoseCount = 0
         print ('ERROR')
-        
-    return {'champKills':champKills, 'mostPlayedChamp':mostPlayedChamp,
-                                           'champDeaths':champDeaths,
-                                           'champAssists':champAssists, 
-                                           'champGoldEarned':champGoldEarned,
-                                           'maxPartidasChamp':maxPartidasChamp,
-                                           'champMinionsKills':champMinionsKills,
-                                           'champWinPorcentaje':champWinPorcentaje,
-                                           'champWins':champWins,
-                                           'champLossesPorcentaje':champLossesPorcentaje, 
-                                           'champLosses':champLosses}
-
+    mostPlayedChampInfo = {}
+    mostPlayedChampInfo['mostPlayedChamp'] = mostPlayedChamp
+    mostPlayedChampInfo['mostPlayedChampMatchesCount'] = mostPlayedChampMatchesCount
+    mostPlayedChampInfo['mostPlayedChampMatchesWinCount'] = mostPlayedChampMatchesWinCount
+    mostPlayedChampInfo['champWinPorcentaje'] = champWinPorcentaje
+    mostPlayedChampInfo['mostPlayedChampMatchesLoseCount'] = mostPlayedChampMatchesLoseCount
+    mostPlayedChampInfo['mostPlayedChampMatchesLoseCountPorcentaje'] = mostPlayedChampMatchesLoseCountPorcentaje
+    mostPlayedChampInfo['mostPlayedChampKills'] = mostPlayedChampKills
+    mostPlayedChampInfo['mostPlayedChampAssist'] = mostPlayedChampAssist
+    mostPlayedChampInfo['mostPlayedChampDeaths'] = mostPlayedChampDeaths
+    mostPlayedChampInfo['mostPLayedChampGold'] = mostPLayedChampGold
+    mostPlayedChampInfo['mostPlayedChampCs'] = mostPlayedChampCs
+    return mostPlayedChampInfo
     #-->Free Champs
 def freeChamps():
-    freeChamps = riotWatcher.get_all_free_champions()
+    freeChampsRiot = riotWatcher.get_all_free_champions()
     freeChampsId = []
-    for j in range(len(freeChamps['champions'])):
-        freeChampsId.append(freeChamps['champions'][j]['id'])
+    for j in range(len(freeChampsRiot['champions'])):
+        freeChampsId.append(freeChampsRiot['champions'][j]['id'])
+
     return {'freeChampsId':freeChampsId}
 
     #-->Partidas
 def featuredGames():
-    tiempoSec = [0,0,0,0,0]
-    minutos = [0,0,0,0,0]
-    segundos = [0,0,0,0,0]
+    featuredGameType = [0,0,0,0,0]
     champPartida = []
+    featuredGames = {}
+    featuredGames['partidas'] = [0,0,0,0,0]
     try:
         for k in range(5):
             champFGc = []
             champFGd = []
-            featuredGames = riotWatcher.get_featured_games()
-            tiempoSec[k] = featuredGames['gameList'][k]['gameLength']
-            minutos[k] = tiempoSec[k] /60
-            segundos[k] =  tiempoSec[k]%60
-            for u in range (len(featuredGames['gameList'][k]['participants'])):
-                if featuredGames['gameList'][k]['participants'][u]['teamId'] == 100 :
-                    champFGc.append(featuredGames['gameList'][k]['participants'][u]['championId'])
+            featuredGamesRiot = riotWatcher.get_featured_games()
+            tiempoSec = featuredGamesRiot['gameList'][k]['gameLength']
+            featuredGameType = featuredGamesRiot['gameList'][k]['gameMode']
+            for u in range (len(featuredGamesRiot['gameList'][k]['participants'])):
+                if featuredGamesRiot['gameList'][k]['participants'][u]['teamId'] == 100 :
+                    champFGc.append(featuredGamesRiot['gameList'][k]['participants'][u]['championId'])
                 else:
-                    champFGd.append(featuredGames['gameList'][k]['participants'][u]['championId'])
-            champPartida.append(champFGd)
-            champPartida.append(champFGc)
+                    champFGd.append(featuredGamesRiot['gameList'][k]['participants'][u]['championId'])
+                    
+            featuredGames['partidas'][k] = {'featuredGameType':featuredGamesRiot['gameList'][k]['gameMode'] ,'tiempoSec':featuredGamesRiot['gameList'][k]['gameLength'], 'champFGd':champFGd, 'champFGc':champFGc}
     except (LoLException):
         print 'error'
-    return {
-                                            'minutos':minutos,
-                                            'segundos':segundos, 'champFGc':champFGc,
-                                            'champFGd':champFGd, 'champPartida':champPartida
-                                            }
+
+    return featuredGames
     
     #--Historial
 def history():
@@ -225,7 +223,8 @@ def history():
         hduracionMin[o] = historial['games'][o]['stats']['timePlayed'] / 60
         if not 'numDeaths' in historial['games'][o]['stats']:
             hdeaths[o] = 0
-        hdeaths[o] = historial['games'][o]['stats']['numDeaths']
+        else:
+            hdeaths[o] = historial['games'][o]['stats']['numDeaths']
         if not 'championsKilled' in historial['games'][o]['stats']:
             hkills[o] = 0
         else:
@@ -268,9 +267,8 @@ def history():
         if not 'item6' in  historial['games'][o]['stats']:
             hitem6[o] = 'Vacio'
         else:
-            hitem6[o] = historial['games'][o]['stats']['item6']
-
-        
+            hitem6[o] = historial['games'][o]['stats']
+    
         
     return {
                                             'hchamp':hchamp,'hwinOrDef':hwinOrDef,
