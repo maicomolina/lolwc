@@ -18,7 +18,7 @@ def profile(request, summoner = None, idSum = None, region = None, info = None):
     #     info = getApiSummoner(summoner = summoner, idSum = idSum, region = region)
     #     return HttpResponse(json.dumps(info), content_type="application/json")
     ###info = getApiSummoner(summoner = summoner, idSum = idSum, region = region)
-    info = getSummonerInfo(summoner = 'Groll', region = 'las')
+    info = getApiSummoner(summoner = summoner, idSum = idSum, region = region)
     return render_to_response('profile.html', {"info":info}, context)
 
 def chat(request, region = None, friend = None):
