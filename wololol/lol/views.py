@@ -20,9 +20,8 @@ def profile(request, summoner = None, idSum = None, region = None, info = None):
     #     print(summoner, idSum, region, info)
     #     info = getApiSummoner(summoner = summoner, idSum = idSum, region = region)
     #     return HttpResponse(json.dumps(info), content_type="application/json")
-    info = getApiSummoner(summoner = 'Groll', region = 'las')
-    
-    ###info = getSummoner(summoner = 'Groll', region = 'las')
+    info = getApiSummoner(summoner = 'Sad Jocker King', region = 'las')
+    ###info = getSummoner(summoner = 'Sad Jocker King', region = 'las')
     return render_to_response('profile.html', {"info":info}, context)
 
 def chat(request, region = None, friend = None):
