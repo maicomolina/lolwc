@@ -200,13 +200,13 @@ def history():
     creepScore= 0
     piEarned = 0
     createDate = 0
-    hitem0 = 0
-    hitem1 = 0
-    hitem2 = 0
-    hitem3 = 0
-    hitem4 = 0
-    hitem5 = 0
-    hitem6 = 0
+    item1 = 0
+    item2 = 0
+    item3 = 0
+    item4 = 0
+    item4 = 0
+    item6 = 0
+    item7 = 0
     history = {}
     history['partidas'] = [0,0,0,0,0,0,0,0,0,0]
 
@@ -240,44 +240,44 @@ def history():
         piEarned = historial['games'][o]['ipEarned']
         createDate = historial['games'][o]['createDate'] 
         if not 'item0' in  historial['games'][o]['stats']:
-            hitem0 = 'Vacio'
+            item1 = 'Vacio'
         else:
-            hitem0 = historial['games'][o]['stats']['item0']
+            item1 = historial['games'][o]['stats']['item0']
         if not 'item1' in  historial['games'][o]['stats']:
-            hitem1 = 'Vacio'
+            item2 = 'Vacio'
         else:
-            hitem1 = historial['games'][o]['stats']['item1']
+            item2 = historial['games'][o]['stats']['item1']
         if not 'item2' in  historial['games'][o]['stats']:
-            hitem2 = 'Vacio'
+            item3 = 'Vacio'
         else:
-            hitem2 = historial['games'][o]['stats']['item2']
+            item3 = historial['games'][o]['stats']['item2']
         if not 'item3' in  historial['games'][o]['stats']:
-            hitem3 = 'Vacio'
+            item4 = 'Vacio'
         else:
-            hitem3 = historial['games'][o]['stats']['item3']
+            item4 = historial['games'][o]['stats']['item3']
         if not 'item4' in  historial['games'][o]['stats']:
-            hitem4 = 'Vacio'
+            item5 = 'Vacio'
         else:
-            hitem4 = historial['games'][o]['stats']['item4']
+            item5 = historial['games'][o]['stats']['item4']
         if not 'item5' in  historial['games'][o]['stats']:
-            hitem5 = 'Vacio'
+            item6 = 'Vacio'
         else:
-            hitem5 = historial['games'][o]['stats']['item5']
+            item6 = historial['games'][o]['stats']['item5']
         if not 'item6' in  historial['games'][o]['stats']:
-            hitem6 = 'Vacio'
+            item7 = 'Vacio'
         else:
-            hitem6 = historial['games'][o]['stats']
+            item7 = historial['games'][o]['stats']
         history['partidas'][o] = {'isWin':isWin,'gameType':gameType, 
                                   'hmap':hmap, 'champId':champId, 
                                   'champLvl':champLvl, 'deaths':deaths,
                                   'kills':kills, 'assists':assists, 
                                   'creepScore':creepScore, 'goldGained':goldGained,
                                   'hduracionSec':hduracionSec, 'piEarned':piEarned,
-                                  'createDate':createDate, 'hitem0':hitem0,
-                                  'hitem1':hitem1,
-                                  'hitem2':hitem2,'hitem3':hitem3,
-                                  'hitem4':hitem4,'hitem5':hitem5,
-                                  'hitem6':hitem6
+                                  'createDate':createDate, 'item1':item1,
+                                  'item6':item6,
+                                  'item2':item2,'item3':item3,
+                                  'item4':item4,'item5':item5,
+                                  'item7':item7
                                  }
         
     print history
@@ -291,11 +291,11 @@ def history():
                                             'assists':assists, 'goldGained':goldGained,
                                             'creepScore':creepScore,
                                             'piEarned':piEarned,
-                                            'createDate':createDate,'hitem0':hitem0,
-                                            'hitem1':hitem1,
-                                            'hitem2':hitem2,'hitem3':hitem3,
-                                            'hitem4':hitem4,'hitem5':hitem5,
-                                            'hitem6':hitem6,
+                                            'createDate':createDate,'item0':item0,
+                                            'item1':item1,
+                                            'item2':item2,'item3':item3,
+                                            'item4':item4,'item5':item5,
+                                            'item6':item6,
                                             }
 
 
