@@ -14,6 +14,7 @@ de Python.'''
 
 riotWatcher = RiotWatcher("98f4f837-c794-4a58-bcb7-b436873a03d2", default_region=LATIN_AMERICA_SOUTH)
 me = riotWatcher.get_summoner(name='sadjockerking')#Se le agradece a Sad Jocker King por prestar su cuenta
+ #utilizada en leagge y summonerInfo
 try:
     rankedst = riotWatcher.get_ranked_stats(me['id'])
     x = int(len(rankedst['champions'])) - 1
@@ -56,8 +57,8 @@ def home(request):
 def summonerInfo():
     try:
         summonerName = me['name']
-        #-->Liga
         ligaInfo = riotWatcher.get_league_entry([str(me['id'])])
+        #-->Liga
         summonerLeage = ligaInfo[str(me['id'])][0]['tier']
         #-->Division
         summonerDivision = ligaInfo[str(me['id'])][0]['entries'][0]['division']
@@ -363,6 +364,35 @@ def masteries():
             print 'no masteries in page'
     return maestrias
 
+
+def leage():
+    ligaWatcher = riotWatcher.get_leage(str(me['id']))
+    leage = {}
+    leage['summonerLeagueTabPList'] = []
+    leage['summonerLeagueTabList'] = []
+    summonerLeagueTabName = ligaWatcher[str(me['id'])][0]['name']
+    summonerLeagueTabRank = ligaWatcher[str(me['id'])][0]['tier']
+    for li in range (len(ligaWatcher[str(me['id'])][0]['entries'])):
+        if (ligaWatcher[str(me['id'])][0]['entries'][li]['leaguePoints'] == 100):
+            summonerLeagueTabPListName = ligaWatcher[str(me['id'])][0]['entries'][li]['playerOrTeamName']
+            summonerLeagueTabPListWins = ligaWatcher[str(me['id'])][0]['entries'][li]['wins']
+            summonerLeagueTabPPromo = ligaWatcher[str(me['id'])][0]['entries'][li]['miniSeries']['progress']
+            summonerLeagueTabPDivision = ligaWatcher[str(me['id'])][0]['entries'][li]['division']
+            summonerLeagueTabPListIsRecent = ligaWatcher[str(me['id'])][0]['entries'][li]['isFreshBlood']
+            summonerLeagueTabPListIsOnFire = ligaWatcher[str(me['id'])][0]['entries'][li]['isHotStreak'] 
+            leage['summonerLeagueTabPList'].append({'summonerLeagueTabPListName':summonerLeagueTabPListName,
+                                                    'summonerLeagueTabPListWins':summonerLeagueTabPListWins,
+                                                    'summonerLeagueTabPPromo':summonerLeagueTabPPromo,
+                                                    'summonerLeagueTabPDivision':summonerLeagueTabPDivision,
+                                                    'summonerLeagueTabPListIsOnFire':summonerLeagueTabPListIsOnFire,
+                                                    'summonerLeagueTabPListIsRecent':summonerLeagueTabPListIsRecent
+                                                   })
+        else:
+            summonerLeagueTabListName = ligaWatcher[str(me['id'])][0]['entries'][li]['playerOrTeamName']
+            summonerLeagueTabListWins = ligaWatcher[str(me['id'])][0]['entries'][li]['wins']
+            summonerLeagueTabListIsRecent = ligaWatcher[str(me['id'])][0]['entries'][li]['isFreshBlood']
+            summonerLeagueTabListIsOnFire = ligaWatcher[str(me['id'])][0]['entries'][li]['isHotStreak'] 
+            summonerLeagueTabListLP = ligaWatcher[str(me['id'])][0]['entries'][li]['leaguePoints']
 
 def most_common(L):
     return max(g(sorted(L)), key=lambda(x, v):(len(list(v)),-L.index(x)))[0]
