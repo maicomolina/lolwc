@@ -185,102 +185,113 @@ def featuredGames():
     
     #--Historial
 def history():
-    hpartidasId = [0,0,0,0,0,0,0,0,0,0]
-    hlevelChamp = [0,0,0,0,0,0,0,0,0,0]
-    hwinOrDef = [0,0,0,0,0,0,0,0,0,0]
-    hchamp = [0,0,0,0,0,0,0,0,0,0]
-    hgameType = [0,0,0,0,0,0,0,0,0,0]
-    hmap = [0,0,0,0,0,0,0,0,0,0]
-    hduracionMin = [0,0,0,0,0,0,0,0,0,0]
-    hduracionSec = [0,0,0,0,0,0,0,0,0,0]
-    hdeaths = [0,0,0,0,0,0,0,0,0,0]
-    hkills = [0,0,0,0,0,0,0,0,0,0]
-    hassists = [0,0,0,0,0,0,0,0,0,0]
-    hgoldEarned = [0,0,0,0,0,0,0,0,0,0]
-    hminionsKilled = [0,0,0,0,0,0,0,0,0,0]
-    hipEarned = [0,0,0,0,0,0,0,0,0,0]
-    hdate = [0,0,0,0,0,0,0,0,0,0]
-    hitem0 = [0,0,0,0,0,0,0,0,0,0]
-    hitem1 = [0,0,0,0,0,0,0,0,0,0]
-    hitem2 = [0,0,0,0,0,0,0,0,0,0]
-    hitem3 = [0,0,0,0,0,0,0,0,0,0]
-    hitem4 = [0,0,0,0,0,0,0,0,0,0]
-    hitem5 = [0,0,0,0,0,0,0,0,0,0]
-    hitem6 = [0,0,0,0,0,0,0,0,0,0]
-    
+    hpartidasId = 0
+    champLvl = 0
+    isWin = False
+    champId = 0
+    gameType = 0
+    hmap = 0
+    hduracionMin = 0
+    hduracionSec = 0
+    deaths = 0
+    kills = 0
+    assists = 0
+    goldGained = 0
+    creepScore= 0
+    piEarned = 0
+    createDate = 0
+    hitem0 = 0
+    hitem1 = 0
+    hitem2 = 0
+    hitem3 = 0
+    hitem4 = 0
+    hitem5 = 0
+    hitem6 = 0
+    history = {}
+    history['partidas'] = [0,0,0,0,0,0,0,0,0,0]
 
     historial = riotWatcher.get_recent_games(me['id'])
     for o in range (len(historial['games'])):
-        hlevelChamp[o] = historial['games'][o]['stats']['level']
+        champLvl = historial['games'][o]['stats']['level']
         if (historial['games'][o]['stats']['win']):
-            hwinOrDef[o] = 'Victoria'
-        else:
-            hwinOrDef[o] = 'Derrota'
-        hchamp[o] = historial['games'][o]['championId']
-        hgameType[o] = historial['games'][o]['subType']
-        hmap[o] = historial['games'][o]['mapId']
-        hduracionSec[o] = historial['games'][o]['stats']['timePlayed']
-        hduracionMin[o] = historial['games'][o]['stats']['timePlayed'] / 60
+            isWin = True
+        champId = historial['games'][o]['championId']
+        gameType = historial['games'][o]['subType']
+        hmap = historial['games'][o]['mapId']
+        hduracionSec = historial['games'][o]['stats']['timePlayed']
+        hduracionMin = historial['games'][o]['stats']['timePlayed'] / 60
         if not 'numDeaths' in historial['games'][o]['stats']:
-            hdeaths[o] = 0
+            deaths = 0
         else:
-            hdeaths[o] = historial['games'][o]['stats']['numDeaths']
+            deaths = historial['games'][o]['stats']['numDeaths']
         if not 'championsKilled' in historial['games'][o]['stats']:
-            hkills[o] = 0
+            kills = 0
         else:
-            hkills[o] = historial['games'][o]['stats']['championsKilled']
+            kills = historial['games'][o]['stats']['championsKilled']
         if not 'assists' in historial['games'][o]['stats']:
-            hassists[o] = 0
+            assists = 0
         else:
-            hassists[o] = historial['games'][o]['stats']['assists']
-        hgoldEarned[o] = historial['games'][o]['stats']['goldEarned']
+            assists = historial['games'][o]['stats']['assists']
+        goldGained = historial['games'][o]['stats']['goldEarned']
         if not 'minionsKilled' in  historial['games'][o]['stats']:
-            hminionsKilled[o] = 0
+            creepScore = 0
         else:
-            hminionsKilled[o] = historial['games'][o]['stats']['minionsKilled']
-        hipEarned[o] = historial['games'][o]['ipEarned']
-        hdate[o] = historial['games'][o]['createDate'] 
+            creepScore = historial['games'][o]['stats']['minionsKilled']
+        piEarned = historial['games'][o]['ipEarned']
+        createDate = historial['games'][o]['createDate'] 
         if not 'item0' in  historial['games'][o]['stats']:
-            hitem0[o] = 'Vacio'
+            hitem0 = 'Vacio'
         else:
-            hitem0[o] = historial['games'][o]['stats']['item0']
+            hitem0 = historial['games'][o]['stats']['item0']
         if not 'item1' in  historial['games'][o]['stats']:
-            hitem1[o] = 'Vacio'
+            hitem1 = 'Vacio'
         else:
-            hitem1[o] = historial['games'][o]['stats']['item1']
+            hitem1 = historial['games'][o]['stats']['item1']
         if not 'item2' in  historial['games'][o]['stats']:
-            hitem2[o] = 'Vacio'
+            hitem2 = 'Vacio'
         else:
-            hitem2[o] = historial['games'][o]['stats']['item2']
+            hitem2 = historial['games'][o]['stats']['item2']
         if not 'item3' in  historial['games'][o]['stats']:
-            hitem3[o] = 'Vacio'
+            hitem3 = 'Vacio'
         else:
-            hitem3[o] = historial['games'][o]['stats']['item3']
+            hitem3 = historial['games'][o]['stats']['item3']
         if not 'item4' in  historial['games'][o]['stats']:
-            hitem4[o] = 'Vacio'
+            hitem4 = 'Vacio'
         else:
-            hitem4[o] = historial['games'][o]['stats']['item4']
+            hitem4 = historial['games'][o]['stats']['item4']
         if not 'item5' in  historial['games'][o]['stats']:
-            hitem5[o] = 'Vacio'
+            hitem5 = 'Vacio'
         else:
-            hitem5[o] = historial['games'][o]['stats']['item5']
+            hitem5 = historial['games'][o]['stats']['item5']
         if not 'item6' in  historial['games'][o]['stats']:
-            hitem6[o] = 'Vacio'
+            hitem6 = 'Vacio'
         else:
-            hitem6[o] = historial['games'][o]['stats']
-    
+            hitem6 = historial['games'][o]['stats']
+        history['partidas'][o] = {'isWin':isWin,'gameType':gameType, 
+                                  'hmap':hmap, 'champId':champId, 
+                                  'champLvl':champLvl, 'deaths':deaths,
+                                  'kills':kills, 'assists':assists, 
+                                  'creepScore':creepScore, 'goldGained':goldGained,
+                                  'hduracionSec':hduracionSec, 'piEarned':piEarned,
+                                  'createDate':createDate, 'hitem0':hitem0,
+                                  'hitem1':hitem1,
+                                  'hitem2':hitem2,'hitem3':hitem3,
+                                  'hitem4':hitem4,'hitem5':hitem5,
+                                  'hitem6':hitem6
+                                 }
         
+    print history
     return {
-                                            'hchamp':hchamp,'hwinOrDef':hwinOrDef,
-                                            'hlevelChamp':hlevelChamp ,
-                                            'hgameType':hgameType , 'hmap':hmap , 
+                                            'champId':champId,'isWin':isWin,
+                                            'champLvl':champLvl ,
+                                            'gameType':gameType , 'hmap':hmap , 
                                             'hduracionMin':hduracionMin,
-                                            'hduracionSec':hduracionSec, 'hdeaths':hdeaths,
-                                            'hkills':hkills, 'hassists':hassists,
-                                            'hassists':hassists, 'hgoldEarned':hgoldEarned,
-                                            'hminionsKilled':hminionsKilled,
-                                            'hipEarned':hipEarned,
-                                            'hdate':hdate,'hitem0':hitem0,
+                                            'hduracionSec':hduracionSec, 'deaths':deaths,
+                                            'kills':kills, 'assists':assists,
+                                            'assists':assists, 'goldGained':goldGained,
+                                            'creepScore':creepScore,
+                                            'piEarned':piEarned,
+                                            'createDate':createDate,'hitem0':hitem0,
                                             'hitem1':hitem1,
                                             'hitem2':hitem2,'hitem3':hitem3,
                                             'hitem4':hitem4,'hitem5':hitem5,
