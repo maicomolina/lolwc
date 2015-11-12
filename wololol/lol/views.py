@@ -31,5 +31,6 @@ def chat(request, region = None, friend = None):
 def static(request, section = None, specific = None):
     print("#-----static-----#")
 
-def home(request, section = None, specific = None):
-    print("#-----static-----#")
+def home(request):
+    context = RequestContext(request)
+    return render_to_response('home.html', context)
