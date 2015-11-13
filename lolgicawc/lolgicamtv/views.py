@@ -5,13 +5,13 @@ from django.shortcuts import render_to_response
 from riotwatcher import LATIN_AMERICA_SOUTH
 from riotwatcher import RiotWatcher
 from riotwatcher import LoLException
+from dataRunes import dataRunes
+
 
 # Create your views here.
 ''' Aqui esta toda la logica de todos los pedidos a la API de league Of Leagends. Por temas de 
 comodidad se utilizo la herramienta Riot Watcher, sirve para hacer los pedidos mediante funciones
 de Python.'''
-
-
 riotWatcher = RiotWatcher("98f4f837-c794-4a58-bcb7-b436873a03d2", default_region=LATIN_AMERICA_SOUTH)
 me = riotWatcher.get_summoner(name='sadjockerking')#Se le agradece a Sad Jocker King por prestar su cuenta
 try:
@@ -24,34 +24,34 @@ except(LoLException):
 def home(request):
     free_to_play = True
     context = RequestContext(request)
-    sumInf = summonerInfo()
-    mpcInf = mostPlayedChampInfo()
-    featgames = featuredGames()
-    free = freeChamps()
-    his = history()
+#    sumInf = summonerInfo()
+#    mpcInf = mostPlayedChampInfo()
+#    featgames = featuredGames()
+#    free = freeChamps()
+#    his = history()
     totalInfo = {}
     runas = runes()
-    maestrias = masteries()
-    ligas = league()
+#    maestrias = masteries()
+#    ligas = league()
     
     # De esta forma los datos ingresan de forma organizada al diccionario con la informacion total
     
-    for ii in sumInf:
-        totalInfo[ii] = sumInf[ii]
-    for jj in mpcInf:
-        totalInfo[jj] = mpcInf[jj]
-    for oo in featgames:
-        totalInfo[oo] = featgames[oo]
-    for pp in his:
-        totalInfo[pp] = his[pp]
-    for cc in free:
-        totalInfo[cc] = free[cc]
+#    for ii in sumInf:
+#        totalInfo[ii] = sumInf[ii]
+#    for jj in mpcInf:
+#        totalInfo[jj] = mpcInf[jj]
+#    for oo in featgames:
+#        totalInfo[oo] = featgames[oo]
+#    for pp in his:
+#        totalInfo[pp] = his[pp]
+#    for cc in free:
+#        totalInfo[cc] = free[cc]
     for qq in runas:
         totalInfo[qq] = runas[qq]
-    for mm in maestrias:
-        totalInfo[mm]  = maestrias[mm]
-    for ll in ligas:
-        totalInfo[ll]  = ligas[ll]
+#    for mm in maestrias:
+#        totalInfo[mm]  = maestrias[mm]
+#    for ll in ligas:
+#        totalInfo[ll]  = ligas[ll]
         
     return render_to_response('home.html', totalInfo )
 #426174
@@ -285,29 +285,34 @@ def history():
 
 #--Runas
 def runes():
-    runes = riotWatcher.get_rune_pages([str(me['id'])])
+    runesWatcher = riotWatcher.get_rune_pages([str(me['id'])])
     runas = {}
     runas['pages'] = []
+    pagina = [0,{}]
+    
     activaIdRunes = 0
-    for r in range(len(runes[str(me['id'])]['pages'])):
-        try:
-            runeId = []
-            runePos = []
-            runIdnPos = []
-            pagIdRunes = runes[str(me['id'])]['pages'][r]['id']
-            pagNameRunes = runes[str(me['id'])]['pages'][r]['name']
-            for sl in range (len(runes[str(me['id'])]['pages'][r]['slots'])):
-                runeId.append(runes[str(me['id'])]['pages'][r]['slots'][sl]['runeId'])
-                runePos.append(runes[str(me['id'])]['pages'][r]['slots'][sl]['runeSlotId'])
-            if runes[str(me['id'])]['pages'][r]['current']:
-                activaIdRunes = r
-            runas['activePage'] = activaIdRunes
-            runas['pages'].append([pagNameRunes])
-            for run in range (len(runeId)):
-                runIdnPos.append([runeId[run], runePos[run]])
-            runas['pages'].append(runIdnPos)  
-        except(KeyError):
-            print 'no runes in page'
+#   try:
+    for pag in range (len(runesWatcher[str(me['id'])]['pages'])):
+        if (runesWatcher[str(me['id'])]['pages'][pag]['current']):
+            activePage = runesWatcher[str(me['id'])]['pages'][pag]['name']
+            runas['activePage'] = activePage
+        pagina[0] = runesWatcher[str(me['id'])]['pages'][pag]['name']
+        for sl in range(len(runesWatcher[str(me['id'])]['pages'][pag]['slots'])):
+            if (runesWatcher[str(me['id'])]['pages'][pag]['slots'][sl]['runeId'] not in pagina[1]):
+                nom = dataRunes['data'][str(runesWatcher[str(me['id'])]['pages'][pag]['slots'][sl]['runeId'])]['name']
+                stats = dataRunes['data'][str(runesWatcher[str(me['id'])]['pages'][pag]['slots'][sl]['runeId'])]['stats'].values()
+                pagina[1][str(runesWatcher[str(me['id'])]['pages'][pag]['slots'][sl]['runeId'])] = [nom,1,stats]
+            else:
+                pagina[1][str(runesWatcher[str(me['id'])]['pages'][pag]['slots'][sl]['runeId'])][1] = pagina[1][str(runesWatcher[str(me['id'])]['pages'][pag]['slots'][sl]['runeId'])][1] + 1
+                pagina[1][str(runesWatcher[str(me['id'])]['pages'][pag]['slots'][sl]['runeId'])][2] = pagina[1][str(runesWatcher[str(me['id'])]['pages'][pag]['slots'][sl]['runeId'])][1] * 2
+        runas['pages'].append(pagina)
+    print runas
+            
+            
+                
+                
+#    except(KeyError):
+#        print 'no runes in page'
     
     return runas
 #--Maestrias
@@ -357,7 +362,6 @@ def league():
     league['summonerLeagueTabRank'] = summonerLeagueTabRank
     league['summonerLeagueTabPList'] = []
     league['summonerLeagueTabList'] = []
-    print len(ligaWatcher[str(me['id'])][0]['entries'])
     for li in range (len(ligaWatcher[str(me['id'])][0]['entries'])):
         try:
             summonerLeagueTabPListName = ligaWatcher[str(me['id'])][0]['entries'][li]['playerOrTeamName']
