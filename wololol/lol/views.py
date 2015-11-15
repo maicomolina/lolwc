@@ -4,6 +4,7 @@ from django.shortcuts import render
 from django.template import RequestContext
 from django.shortcuts import render_to_response
 from django.http import HttpResponse
+from chat import Cliente
 from riotwatcher import getApiSummoner, getCacheSummoner
 #from ovejawatcher import getSummoner
 
@@ -25,7 +26,21 @@ def profile(request, summoner = None, idSum = None, region = None, info = None):
     return render_to_response('profile.html', {"info":info}, context)
 
 def chat(request, region = None, friend = None):
-    print("#-----chat-----#")
+    # cliente = Cliente("banersjk", "zxmfkmk126", region)
+    # import time
+    # print("ESPERANDO 20 SECONDS")
+    # print("ESPERANDO 20 SECONDS")
+    # print("ESPERANDO 20 SECONDS")
+    # time.sleep(20)
+    # info = cliente.getAll()
+
+    #cliente.send("421651", "Hola como andas?")#Envia Mensaje al summoner con esa id
+    #cliente.statusMsg = "Mensaje de Estado Nuevo"#modifica una propiedad del cliente
+    #cliente.refreshStatusFromProps()#Y refresca el estado online con esa nueva propiedad
+    info = None
+    context = RequestContext(request)
+    return render_to_response('chat.html', {"info":info}, context)
+
 
 def static(request, section = None, specific = None):
     print("#-----static-----#")
