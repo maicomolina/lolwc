@@ -25,14 +25,15 @@ def profile(request, summoner = None, idSum = None, region = None, info = None):
     #info = getSummoner(summoner = 'Sad Jocker King', region = 'las')
     return render_to_response('profile.html', {"info":info}, context)
 
-def chat(request, region = None, friend = None):
-    # cliente = Cliente("banersjk", "zxmfkmk126", region)
-    # import time
-    # print("ESPERANDO 20 SECONDS")
-    # print("ESPERANDO 20 SECONDS")
-    # print("ESPERANDO 20 SECONDS")
-    # time.sleep(20)
-    # info = cliente.getAll()
+def chat(request, user = None, password = None, region = None, friend = None):
+    if user != None and password != None and region != None:
+        cliente = Cliente(user, password, region)
+    else:
+        cliente = Cliente("banersjk", "zxmfkmk126", "las")
+    import time
+    print("ESPERANDO 20 SECONDS")
+    time.sleep(10)
+    info = cliente.getAll()
 
     #cliente.send("421651", "Hola como andas?")#Envia Mensaje al summoner con esa id
     #cliente.statusMsg = "Mensaje de Estado Nuevo"#modifica una propiedad del cliente
@@ -42,6 +43,7 @@ def chat(request, region = None, friend = None):
     return render_to_response('chat.html', {"info":info}, context)
 
 
+#TODO cambiar nombre static
 def static(request, section = None, specific = None):
     print("#-----static-----#")
 
