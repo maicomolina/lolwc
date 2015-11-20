@@ -5,8 +5,8 @@ from django.template import RequestContext
 from django.shortcuts import render_to_response
 from django.http import HttpResponse
 from chat import Cliente
-from riotwatcher import getApiSummoner, getCacheSummoner
-#from ovejawatcher import getSummoner
+#from riotwatcher import getApiSummoner, getCacheSummoner
+from ovejawatcher import getSummoner, prueba
 
 #ReturnJSON: return HttpResponse(json.dumps(valores), content_type="application/json")
 
@@ -21,8 +21,8 @@ def profile(request, summoner = None, idSum = None, region = None, info = None):
     #     print(summoner, idSum, region, info)
     #     info = getApiSummoner(summoner = summoner, idSum = idSum, region = region)
     #     return HttpResponse(json.dumps(info), content_type="application/json")
-    info = getApiSummoner(summoner = 'Sad Jocker King', region = 'las')
-    #info = getSummoner(summoner = 'Sad Jocker King', region = 'las')
+    #info = getApiSummoner(summoner = 'Sad Jocker King', region = 'las')
+    info = prueba(summonerId=426174)
     return render_to_response('profile.html', {"info":info}, context)
 
 def chat(request, user = None, password = None, region = None, friend = None):
