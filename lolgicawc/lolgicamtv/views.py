@@ -1,9 +1,5 @@
-#-*- coding: utf-8 -*-
-#-*- coding: utf-8 -*-
-#-*- coding: utf-8 -*-
-#-*- coding: utf-8 -*-
-#-*- coding: utf-8 -*-
-#-*- coding: utf-8 -*-
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
 from django.shortcuts import render
 from django.template import RequestContext
@@ -14,6 +10,11 @@ from riotwatcher import RiotWatcher
 from riotwatcher import LoLException
 from dataRunes import dataRunes
 from dataMasteries import dataMasteries
+
+#no pregunes
+import sys
+reload(sys)
+sys.setdefaultencoding("utf-8")
 
 # Create your views here.
 ''' Aqui esta toda la logica de todos los pedidos a la API de league Of Leagends. Por temas de 
@@ -319,29 +320,38 @@ def runes():
 
     except(KeyError):
         print 'no runes in page'
-    
-    return runas
+    returnea = runas['pages'][0][1]['5245'][0]
+    print returnea
+    return {returnea:'returnea'}
 #--Maestrias
 def masteries():
     masteries = riotWatcher.get_mastery_pages([str(me['id'])])
     maestrias = {}
-    maestrias['pages'] = []
-    distribution = [0,0,0]
-    ferocidad = 0
-    astucia = 0
-    valor = 0
+    maestrias['masteries'] = []
     for m in range(len(masteries[str(me['id'])]['pages'])):
+        ferocidad = 0
+        astucia = 0
+        valor = 0
+        page = [0]
+        distribution = [0,0,0]
         try:
-            if (masteries[str(me['id'])]['pages'][m]['current'])
+            pageName = masteries[str(me['id'])]['pages'][m]['name']
+            if (masteries[str(me['id'])]['pages'][m]['current']):
                 activaMasteries = masteries[str(me['id'])]['pages'][m]['name']
                 maestrias['activePage'] = activaMasteries
-            for mas in range (len(masteries[str(me['id'])]['pages']['masteries'])):
-                if masteries[str(me['id'])]['pages']['masteries']['id'] < 6200:
-                    ferocidad += 1 
-                elif masteries[str(me['id'])]['pages']['masteries']['id'] >= 6300:
-                    astucia += 1
+            for mas in range (len(masteries[str(me['id'])]['pages'][m]['masteries'])):
+                if masteries[str(me['id'])]['pages'][m]['masteries'][mas]['id'] < 6200:
+                    ferocidad = ferocidad + masteries[str(me['id'])]['pages'][m]['masteries'][mas]['rank']
+                elif masteries[str(me['id'])]['pages'][m]['masteries'][mas]['id'] >= 6300:
+                    astucia = astucia + masteries[str(me['id'])]['pages'][m]['masteries'][mas]['rank']
                 else:
-                    valor += 1
+                    valor = valor + masteries[str(me['id'])]['pages'][m]['masteries'][mas]['rank']
+                distribution[0] = ferocidad
+                distribution[1] = astucia
+                distribution[2] = valor
+            page[0] = pageName
+            page.append(distribution)
+            maestrias['masteries'].append(page)
         except(KeyError):
             print 'no masteries in page'
     return maestrias
