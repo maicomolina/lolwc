@@ -1,3 +1,10 @@
+#-*- coding: utf-8 -*-
+#-*- coding: utf-8 -*-
+#-*- coding: utf-8 -*-
+#-*- coding: utf-8 -*-
+#-*- coding: utf-8 -*-
+#-*- coding: utf-8 -*-
+
 from django.shortcuts import render
 from django.template import RequestContext
 from django.shortcuts import render_to_response
@@ -6,7 +13,7 @@ from riotwatcher import LATIN_AMERICA_SOUTH
 from riotwatcher import RiotWatcher
 from riotwatcher import LoLException
 from dataRunes import dataRunes
-
+from dataMasteries import dataMasteries
 
 # Create your views here.
 ''' Aqui esta toda la logica de todos los pedidos a la API de league Of Leagends. Por temas de 
@@ -288,31 +295,30 @@ def runes():
     runesWatcher = riotWatcher.get_rune_pages([str(me['id'])])
     runas = {}
     runas['pages'] = []
-    pagina = [0,{}]
     
     activaIdRunes = 0
-#   try:
-    for pag in range (len(runesWatcher[str(me['id'])]['pages'])):
-        if (runesWatcher[str(me['id'])]['pages'][pag]['current']):
-            activePage = runesWatcher[str(me['id'])]['pages'][pag]['name']
-            runas['activePage'] = activePage
-        pagina[0] = runesWatcher[str(me['id'])]['pages'][pag]['name']
-        for sl in range(len(runesWatcher[str(me['id'])]['pages'][pag]['slots'])):
-            if (runesWatcher[str(me['id'])]['pages'][pag]['slots'][sl]['runeId'] not in pagina[1]):
-                nom = dataRunes['data'][str(runesWatcher[str(me['id'])]['pages'][pag]['slots'][sl]['runeId'])]['name']
-                stats = dataRunes['data'][str(runesWatcher[str(me['id'])]['pages'][pag]['slots'][sl]['runeId'])]['stats'].values()
-                pagina[1][str(runesWatcher[str(me['id'])]['pages'][pag]['slots'][sl]['runeId'])] = [nom,1,stats]
-            else:
-                pagina[1][str(runesWatcher[str(me['id'])]['pages'][pag]['slots'][sl]['runeId'])][1] = pagina[1][str(runesWatcher[str(me['id'])]['pages'][pag]['slots'][sl]['runeId'])][1] + 1
-                pagina[1][str(runesWatcher[str(me['id'])]['pages'][pag]['slots'][sl]['runeId'])][2] = pagina[1][str(runesWatcher[str(me['id'])]['pages'][pag]['slots'][sl]['runeId'])][1] * 2
-        runas['pages'].append(pagina)
-    print runas
-            
-            
-                
-                
-#    except(KeyError):
-#        print 'no runes in page'
+    try:
+        for pag in range (len(runesWatcher[str(me['id'])]['pages'])):
+            pagina = [0,{}]
+            if (runesWatcher[str(me['id'])]['pages'][pag]['current']):
+                activePage = runesWatcher[str(me['id'])]['pages'][pag]['name']
+                runas['activePage'] = activePage
+            pagina[0] = runesWatcher[str(me['id'])]['pages'][pag]['name']
+            for sl in range(len(runesWatcher[str(me['id'])]['pages'][pag]['slots'])):
+                if (str(runesWatcher[str(me['id'])]['pages'][pag]['slots'][sl]['runeId']) not in pagina[1]):
+                    nom = dataRunes['data'][str(runesWatcher[str(me['id'])]['pages'][pag]['slots'][sl]['runeId'])]['name']
+                    stats = dataRunes['data'][str(runesWatcher[str(me['id'])]['pages'][pag]['slots'][sl]['runeId'])]['stats'].values()[0]
+                    pagina[1][str(runesWatcher[str(me['id'])]['pages'][pag]['slots'][sl]['runeId'])] = [nom,1,stats]
+                else:
+                    pagina[1][str(runesWatcher[str(me['id'])]['pages'][pag]['slots'][sl]['runeId'])][1] = str(int(pagina[1][str(runesWatcher[str(me['id'])]['pages'][pag]['slots'][sl]['runeId'])][1]) + 1)
+                    pagina[1][str(runesWatcher[str(me['id'])]['pages'][pag]['slots'][sl]['runeId'])][2] += dataRunes['data'][str(runesWatcher[str(me['id'])]['pages'][pag]['slots'][sl]['runeId'])]['stats'].values()[0]
+                    pagina[1][str(runesWatcher[str(me['id'])]['pages'][pag]['slots'][sl]['runeId'])][2] = round(pagina[1][str(runesWatcher[str(me['id'])]['pages'][pag]['slots'][sl]['runeId'])][2] , 3)
+                    if ('perLevel' in dataRunes['data'][str(runesWatcher[str(me['id'])]['pages'][pag]['slots'][sl]['runeId'])]['tags']):
+                        pagina[1][str(runesWatcher[str(me['id'])]['pages'][pag]['slots'][sl]['runeId'])][2] = pagina[1][str(runesWatcher[str(me['id'])]['pages'][pag]['slots'][sl]['runeId'])][2]* 17
+            runas['pages'].append(pagina)
+
+    except(KeyError):
+        print 'no runes in page'
     
     return runas
 #--Maestrias
@@ -321,33 +327,21 @@ def masteries():
     maestrias = {}
     maestrias['pages'] = []
     distribution = [0,0,0]
-    activaIdMasteries = 0
+    ferocidad = 0
+    astucia = 0
+    valor = 0
     for m in range(len(masteries[str(me['id'])]['pages'])):
         try:
-            masteryId = []
-            masteryPos = []
-            masIdnRank = []
-            pagIdMaestries = masteries[str(me['id'])]['pages'][m]['id']
-            pagNameMaestries = masteries[str(me['id'])]['pages'][m]['name']
-            for mas in range(len(masteries[str(me['id'])]['pages'][m]['masteries'])):
-                masteryId.append(masteries[str(me['id'])]['pages'][m]['masteries'][mas]['id'])
-                masteryPos.append(masteries[str(me['id'])]['pages'][m]['masteries'][mas]['rank'])
-            for idnpos in range(len(masteryId)):
-                masIdnRank.append([masteryId[idnpos], masteryPos[idnpos]])
-            if masteries[str(me['id'])]['pages'][m]['current']:
-                    activaIdMasteries = m
-                    for dis in range (len(masteries[str(me['id'])]['pages'][m]['masteries'])):
-
-                        if (masteries[str(me['id'])]['pages'][m]['masteries'][dis]['id'] < 4200):
-                            distribution[0] = distribution[0] + masteries[str(me['id'])]['pages'][m]['masteries'][dis]['rank']
-                        elif (masteries[str(me['id'])]['pages'][m]['masteries'][dis]['id'] > 4300):
-                            distribution[2] = distribution[2] + masteries[str(me['id'])]['pages'][m]['masteries'][dis]['rank']
-                        else:
-                            distribution[1] = distribution[1] + masteries[str(me['id'])]['pages'][m]['masteries'][dis]['rank']
-            maestrias['activePage'] = activaIdMasteries
-            maestrias['distribution'] = distribution
-            maestrias['pages'].append(pagNameMaestries)
-            maestrias['pages'].append(masIdnRank)
+            if (masteries[str(me['id'])]['pages'][m]['current'])
+                activaMasteries = masteries[str(me['id'])]['pages'][m]['name']
+                maestrias['activePage'] = activaMasteries
+            for mas in range (len(masteries[str(me['id'])]['pages']['masteries'])):
+                if masteries[str(me['id'])]['pages']['masteries']['id'] < 6200:
+                    ferocidad += 1 
+                elif masteries[str(me['id'])]['pages']['masteries']['id'] >= 6300:
+                    astucia += 1
+                else:
+                    valor += 1
         except(KeyError):
             print 'no masteries in page'
     return maestrias
