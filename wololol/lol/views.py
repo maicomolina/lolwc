@@ -10,6 +10,7 @@ from riotwatcher import getApiSummoner, getCacheSummoner
 
 #ReturnJSON: return HttpResponse(json.dumps(valores), content_type="application/json")
 
+clientes = []
 
 def profile(request, summoner = None, idSum = None, region = None, info = None):
     context = RequestContext(request)
@@ -26,21 +27,16 @@ def profile(request, summoner = None, idSum = None, region = None, info = None):
     return render_to_response('profile.html', {"info":info}, context)
 
 def chat(request, user = None, password = None, region = None, friend = None):
+    context = RequestContext(request)
     if user != None and password != None and region != None:
         cliente = Cliente(user, password, region)
     else:
-        cliente = Cliente("banersjk", "zxmfkmk126", "las")
-    import time
-    print("ESPERANDO 20 SECONDS")
-    time.sleep(5)
-    info = cliente.getAll()
+        print("Returnear pagina de error de forma similar a lo comentado abajo")
+        #info = {"head":"No ingreso todos los datos", "content":"Asegurese de ingresar los datos correctamente"}
+        #return render_to_response('error.html',{"info":info}, context)
+        return render_to_response('chatOff.html', context)
 
-    #cliente.send("421651", "Hola como andas?")#Envia Mensaje al summoner con esa id
-    #cliente.statusMsg = "Mensaje de Estado Nuevo"#modifica una propiedad del cliente
-    #cliente.refreshStatusFromProps()#Y refresca el estado online con esa nueva propiedad
-    info = None
-    context = RequestContext(request)
-    return render_to_response('chat.html', {"info":info}, context)
+    return render_to_response('chat.html', context)
 
 
 #TODO cambiar nombre static

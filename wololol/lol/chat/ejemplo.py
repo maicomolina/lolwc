@@ -41,7 +41,3 @@ except KeyboardInterrupt:
     for i in clientes:
         i.close("Cerrando "+str(i.name))
     print("Adios!")
-#cliente.send("421651", "Hola como andas?")#Envia Mensaje al summoner con esa id
-
-#cliente.statusMsg = "Mensaje de Estado Nuevo"#modifica una propiedad del cliente
-#cliente.refreshStatusFromProps()#Y refresca el estado online con esa nueva propiedad
