@@ -11,17 +11,13 @@ from riotwatcher import LoLException
 from dataRunes import dataRunes
 from dataMasteries import dataMasteries
 
-#no pregunes
-import sys
-reload(sys)
-sys.setdefaultencoding("utf-8")
-
 # Create your views here.
 ''' Aqui esta toda la logica de todos los pedidos a la API de league Of Leagends. Por temas de 
 comodidad se utilizo la herramienta Riot Watcher, sirve para hacer los pedidos mediante funciones
 de Python.'''
 riotWatcher = RiotWatcher("98f4f837-c794-4a58-bcb7-b436873a03d2", default_region=LATIN_AMERICA_SOUTH)
 me = riotWatcher.get_summoner(name='sadjockerking')#Se le agradece a Sad Jocker King por prestar su cuenta
+
 try:
     rankedst = riotWatcher.get_ranked_stats(me['id'])
     x = int(len(rankedst['champions'])) - 1
@@ -296,7 +292,6 @@ def runes():
     runesWatcher = riotWatcher.get_rune_pages([str(me['id'])])
     runas = {}
     runas['pages'] = []
-    
     activaIdRunes = 0
     try:
         for pag in range (len(runesWatcher[str(me['id'])]['pages'])):
@@ -308,21 +303,23 @@ def runes():
             for sl in range(len(runesWatcher[str(me['id'])]['pages'][pag]['slots'])):
                 if (str(runesWatcher[str(me['id'])]['pages'][pag]['slots'][sl]['runeId']) not in pagina[1]):
                     nom = dataRunes['data'][str(runesWatcher[str(me['id'])]['pages'][pag]['slots'][sl]['runeId'])]['name']
+                    img = dataRunes['data'][str(runesWatcher[str(me['id'])]['pages'][pag]['slots'][sl]['runeId'])]['image']['full']
                     stats = dataRunes['data'][str(runesWatcher[str(me['id'])]['pages'][pag]['slots'][sl]['runeId'])]['stats'].values()[0]
-                    pagina[1][str(runesWatcher[str(me['id'])]['pages'][pag]['slots'][sl]['runeId'])] = [nom,1,stats]
+                    stats = str(stats)
+                    pagina[1][str(runesWatcher[str(me['id'])]['pages'][pag]['slots'][sl]['runeId'])] = [img, nom,1,stats]
                 else:
-                    pagina[1][str(runesWatcher[str(me['id'])]['pages'][pag]['slots'][sl]['runeId'])][1] = str(int(pagina[1][str(runesWatcher[str(me['id'])]['pages'][pag]['slots'][sl]['runeId'])][1]) + 1)
-                    pagina[1][str(runesWatcher[str(me['id'])]['pages'][pag]['slots'][sl]['runeId'])][2] += dataRunes['data'][str(runesWatcher[str(me['id'])]['pages'][pag]['slots'][sl]['runeId'])]['stats'].values()[0]
-                    pagina[1][str(runesWatcher[str(me['id'])]['pages'][pag]['slots'][sl]['runeId'])][2] = round(pagina[1][str(runesWatcher[str(me['id'])]['pages'][pag]['slots'][sl]['runeId'])][2] , 3)
+                    statsFloat = float(pagina[1][str(runesWatcher[str(me['id'])]['pages'][pag]['slots'][sl]['runeId'])][3])
+                    pagina[1][str(runesWatcher[str(me['id'])]['pages'][pag]['slots'][sl]['runeId'])][2] = str(int(pagina[1][str(runesWatcher[str(me['id'])]['pages'][pag]['slots'][sl]['runeId'])][2]) + 1)
+                    statsFloat += dataRunes['data'][str(runesWatcher[str(me['id'])]['pages'][pag]['slots'][sl]['runeId'])]['stats'].values()[0]
+                    statsFloat = round(statsFloat , 3)
                     if ('perLevel' in dataRunes['data'][str(runesWatcher[str(me['id'])]['pages'][pag]['slots'][sl]['runeId'])]['tags']):
-                        pagina[1][str(runesWatcher[str(me['id'])]['pages'][pag]['slots'][sl]['runeId'])][2] = pagina[1][str(runesWatcher[str(me['id'])]['pages'][pag]['slots'][sl]['runeId'])][2]* 17
+                        statsFloat = statsFloat* 17
+                    pagina[1][str(runesWatcher[str(me['id'])]['pages'][pag]['slots'][sl]['runeId'])][3] = statsFloat
             runas['pages'].append(pagina)
 
     except(KeyError):
         print 'no runes in page'
-    returnea = runas['pages'][0][1]['5245'][0]
-    print returnea
-    return {returnea:'returnea'}
+    return runas
 #--Maestrias
 def masteries():
     masteries = riotWatcher.get_mastery_pages([str(me['id'])])
@@ -358,30 +355,38 @@ def masteries():
 
 
 def league():
-    ligaWatcher = riotWatcher.get_leaguee([str(me['id'])])
+    ligaInfo = riotWatcher.get_league_entry([str(me['id'])])
+    for i in range(len(ligaInfo[str(me['id'])])):
+        if(ligaInfo[str(me['id'])][i]['queue'] == 'RANKED_SOLO_5x5'):
+            summonerDivision = ligaInfo[str(me['id'])][i]['entries'][0]['division']
+            break
+    ligaWatcher = riotWatcher.get_league([str(me['id'])])#En caso de no funcionar ver la funcion de riotWatcher de la carpeta lolgica
     league = {}
     summonerLeagueTabName = ligaWatcher[str(me['id'])][0]['name']
     summonerLeagueTabRank = ligaWatcher[str(me['id'])][0]['tier']
     league['summonerLeagueTabName'] = summonerLeagueTabName
     league['summonerLeagueTabRank'] = summonerLeagueTabRank
+    league['summonerLeagueTabDivision'] = summonerDivision
     league['summonerLeagueTabPList'] = []
     league['summonerLeagueTabList'] = []
     for li in range (len(ligaWatcher[str(me['id'])][0]['entries'])):
         try:
-            summonerLeagueTabPListName = ligaWatcher[str(me['id'])][0]['entries'][li]['playerOrTeamName']
-            summonerLeagueTabPListWins = ligaWatcher[str(me['id'])][0]['entries'][li]['wins']
-            summonerLeagueTabPPromo = ligaWatcher[str(me['id'])][0]['entries'][li]['miniSeries']['progress']
-            summonerLeagueTabPDivision = ligaWatcher[str(me['id'])][0]['entries'][li]['division']
-            summonerLeagueTabPListIsRecent = ligaWatcher[str(me['id'])][0]['entries'][li]['isFreshBlood']
-            summonerLeagueTabPListIsOnFire = ligaWatcher[str(me['id'])][0]['entries'][li]['isHotStreak']
-            league['summonerLeagueTabPList'].append({'summonerLeagueTabPListName':summonerLeagueTabPListName,
-                                                    'summonerLeagueTabPListWins':summonerLeagueTabPListWins,
-                                                    'summonerLeagueTabPPromo':summonerLeagueTabPPromo,
-                                                    'summonerLeagueTabPDivision':summonerLeagueTabPDivision,
-                                                    'summonerLeagueTabPListIsOnFire':summonerLeagueTabPListIsOnFire,
-                                                    'summonerLeagueTabPListIsRecent':summonerLeagueTabPListIsRecent
-                                                   })
+            if(summonerDivision == ligaWatcher[str(me['id'])][0]['entries'][li]['division']):
+                summonerLeagueTabPListName = ligaWatcher[str(me['id'])][0]['entries'][li]['playerOrTeamName']
+                summonerLeagueTabPListWins = ligaWatcher[str(me['id'])][0]['entries'][li]['wins']
+                summonerLeagueTabPPromo = ligaWatcher[str(me['id'])][0]['entries'][li]['miniSeries']['progress']
+                summonerLeagueTabPDivision = ligaWatcher[str(me['id'])][0]['entries'][li]['division']
+                summonerLeagueTabPListIsRecent = ligaWatcher[str(me['id'])][0]['entries'][li]['isFreshBlood']
+                summonerLeagueTabPListIsOnFire = ligaWatcher[str(me['id'])][0]['entries'][li]['isHotStreak']
+                league['summonerLeagueTabPList'].append({'summonerLeagueTabPListName':summonerLeagueTabPListName,
+                                                        'summonerLeagueTabPListWins':summonerLeagueTabPListWins,
+                                                        'summonerLeagueTabPPromo':summonerLeagueTabPPromo,
+                                                        'summonerLeagueTabPDivision':summonerLeagueTabPDivision,
+                                                        'summonerLeagueTabPListIsOnFire':summonerLeagueTabPListIsOnFire,
+                                                        'summonerLeagueTabPListIsRecent':summonerLeagueTabPListIsRecent
+                                                       })
         except(KeyError):
+            if(summonerDivision == ligaWatcher[str(me['id'])][0]['entries'][li]['division']):
                 summonerLeagueTabListName = ligaWatcher[str(me['id'])][0]['entries'][li]['playerOrTeamName']
                 summonerLeagueTabListWins = ligaWatcher[str(me['id'])][0]['entries'][li]['wins']
                 summonerLeagueTabListIsRecent = ligaWatcher[str(me['id'])][0]['entries'][li]['isFreshBlood']
@@ -395,7 +400,6 @@ def league():
                                                         'summonerLeagueTabListLP':summonerLeagueTabListLP,
                                                         'summonerLeagueTabDivision':summonerLeagueTabDivision
                                                        })
-            
     return league
 
 def most_common(L):
