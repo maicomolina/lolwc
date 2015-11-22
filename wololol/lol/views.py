@@ -6,7 +6,7 @@ from django.shortcuts import render_to_response
 from django.http import HttpResponse
 from chat import Cliente
 from riotwatcher import getApiSummoner, getCacheSummoner
-#from ovejawatcher import getSummoner, prueba
+###from ovejawatcher import getSummoner, prueba
 
 #ReturnJSON: return HttpResponse(json.dumps(valores), content_type="application/json")
 
@@ -23,10 +23,16 @@ def profile(request, summoner = None, idSum = None, region = None, info = None):
     #     info = getApiSummoner(summoner = summoner, idSum = idSum, region = region)
     #     return HttpResponse(json.dumps(info), content_type="application/json")
     info = getApiSummoner(summoner = 'Sad Jocker King', region = 'las')
-    #info = prueba(summonerId=426174)
+    ###info = prueba(summonerId=426174)
     return render_to_response('profile.html', {"info":info}, context)
 
 def chat(request, user = None, password = None, region = None, friend = None):
+    #TODO iniciar chat cuando me logueo
+    #TODO darle al client.py capacidades de renderizar
+    #TODO enviar json con la informacion de getAll y printearla por python
+    #TODO printear la informacion json por javascript
+    #TODO loguearme con el chatoff
+    #TODO iniciar socket por javascript y el client, que el client le renderize al socket
     context = RequestContext(request)
     if user != None and password != None and region != None:
         cliente = Cliente(user, password, region)
@@ -40,8 +46,10 @@ def chat(request, user = None, password = None, region = None, friend = None):
 
 
 #TODO cambiar nombre static
-def static(request, section = None, specific = None):
-    print("#-----static-----#")
+def data(request, section = None, specific = None):
+    print("#----data----#")
+    context = RequestContext(request)
+    return render_to_response('underConstruction.html', context)
 
 def home(request):
     context = RequestContext(request)
