@@ -27,7 +27,18 @@ def profile(request, summoner = None, idSum = None, region = None, info = None):
     ###info = prueba(summonerId=426174)
     return render_to_response('profile.html', {"info":info}, context)
 
+def send_hello_world():#BORRAMEBORRAMEBORRAMEBORRAMEBORRAMEBORRAMEBORRAMEBORRAMEBORRAMEBORRAME
+    from omnibus.api import publish
+    print("helloworld?")
+    publish(
+        'chat',  # the name of the channel
+        'friendConnected',  # the `type` of the message/event, clients use this name to register event handlers
+        {'text': 'Hello world'},  # payload of the event, needs to be a dict which is JSON dumpable.
+        sender='server'  # sender id of the event, can be None.
+    )
+
 def chat(request, user = None, password = None, region = None, friend = None):
+    send_hello_world()#BORRAMEBORRAMEBORRAMEBORRAMEBORRAMEBORRAMEBORRAMEBORRAMEBORRAMEBORRAME
     context = RequestContext(request)
     global clientes
     #TODO iniciar chat cuando me logueo
@@ -46,9 +57,6 @@ def chat(request, user = None, password = None, region = None, friend = None):
         user = request.POST["user"]
         password = request.POST["password"]
 
-    print(user)
-    print(password)
-    print(region)
     if user != None and password != None and region != None:
         cliente = Cliente(user, password, region)
         if cliente.connected:
@@ -77,8 +85,6 @@ def chat(request, user = None, password = None, region = None, friend = None):
             return render_to_response('chat.html', {"info":info}, context)
     else:
         return render_to_response('chat.html', context)
-
-
 
 #TODO cambiar nombre static
 def data(request, section = None, specific = None):
