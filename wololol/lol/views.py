@@ -1,4 +1,5 @@
- #Al quitar alguna linea al trabajar, transformenla en un comentario con 3 numerales
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 import json
 from django.shortcuts import render
 from django.template import RequestContext
@@ -27,22 +28,56 @@ def profile(request, summoner = None, idSum = None, region = None, info = None):
     return render_to_response('profile.html', {"info":info}, context)
 
 def chat(request, user = None, password = None, region = None, friend = None):
+    context = RequestContext(request)
+    global clientes
     #TODO iniciar chat cuando me logueo
+    #me logueo bien por html
+    #me logueo bien por url
+    #me logueo mal por html
+    #me logueo mal por url
     #TODO darle al client.py capacidades de renderizar
+    #TODO que el client renderice los errores de auth y de conexion
     #TODO enviar json con la informacion de getAll y printearla por python
     #TODO printear la informacion json por javascript
     #TODO loguearme con el chatoff
     #TODO iniciar socket por javascript y el client, que el client le renderize al socket
-    context = RequestContext(request)
+    if request.method == "POST":
+        region = request.POST["server"]
+        user = request.POST["user"]
+        password = request.POST["password"]
+
+    print(user)
+    print(password)
+    print(region)
     if user != None and password != None and region != None:
         cliente = Cliente(user, password, region)
-    else:
-        print("Returnear pagina de error de forma similar a lo comentado abajo")
-        #info = {"head":"No ingreso todos los datos", "content":"Asegurese de ingresar los datos correctamente"}
-        #return render_to_response('error.html',{"info":info}, context)
-        return render_to_response('chatOff.html', context)
+        if cliente.connected:
+            for i in range(len(clientes)):
+                if clientes[i].jid == cliente.jid:
+                    clientes.pop(i)
+                    break
+            clientes.append(cliente)
+            info={
+                #TODO returnear serverStatus
+                "message":"<h1 class='green-text'>Conectando...</h1><p class='center white-text'>Espere mientras se conecta al servidor de Riot Games</p>",
+                "typ":"loginCorrect"
+                }
+            if request.method == "POST":
+                return HttpResponse(json.dumps(info), content_type="application/json")
+            return render_to_response('chat.html', {"info":info}, context)
 
-    return render_to_response('chat.html', context)
+        else:
+            info={
+                #TODO returnear serverStatus
+                "message":"<h1 class='red-text'>No fue posible conectarse</h1><p class='center red-text'>Revisa tu usario y contraseña</p>",
+                "typ":"authError",
+                }
+            if request.method == "POST":
+                return HttpResponse(json.dumps(info), content_type="application/json")
+            return render_to_response('chat.html', {"info":info}, context)
+    else:
+        return render_to_response('chat.html', context)
+
 
 
 #TODO cambiar nombre static
