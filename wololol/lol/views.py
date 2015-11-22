@@ -23,7 +23,7 @@ def profile(request, summoner = None, idSum = None, region = None, info = None):
     #     print(summoner, idSum, region, info)
     #     info = getApiSummoner(summoner = summoner, idSum = idSum, region = region)
     #     return HttpResponse(json.dumps(info), content_type="application/json")
-    info = getSummoner(summoner = 'Groll', region = 'las')
+    info = getSummoner(summoner = 'ISG HyperX Emp', region = 'las')
     return render_to_response('profile.html', {"info":info}, context)
 
 def send_hello_world():#BORRAMEBORRAMEBORRAMEBORRAMEBORRAMEBORRAMEBORRAMEBORRAMEBORRAMEBORRAME
