@@ -26,18 +26,7 @@ def profile(request, summoner = None, idSum = None, region = None, info = None):
     info = getSummoner(summoner = 'ISG HyperX Emp', region = 'las')
     return render_to_response('profile.html', {"info":info}, context)
 
-def send_hello_world():#BORRAMEBORRAMEBORRAMEBORRAMEBORRAMEBORRAMEBORRAMEBORRAMEBORRAMEBORRAME
-    from omnibus.api import publish
-    print("helloworld?")
-    publish(
-        'chat',  # the name of the channel
-        'friendConnected',  # the `type` of the message/event, clients use this name to register event handlers
-        {'text': 'Hello world'},  # payload of the event, needs to be a dict which is JSON dumpable.
-        sender='server'  # sender id of the event, can be None.
-    )
-
 def chat(request, user = None, password = None, region = None, friend = None):
-    send_hello_world()#BORRAMEBORRAMEBORRAMEBORRAMEBORRAMEBORRAMEBORRAMEBORRAMEBORRAMEBORRAME
     context = RequestContext(request)
     global clientes
     #TODO iniciar chat cuando me logueo
@@ -52,9 +41,21 @@ def chat(request, user = None, password = None, region = None, friend = None):
     #TODO loguearme con el chatoff
     #TODO iniciar socket por javascript y el client, que el client le renderize al socket
     if request.method == "POST":
-        region = request.POST["server"]
-        user = request.POST["user"]
-        password = request.POST["password"]
+        if "message" in request.POST:
+            if request.POST["message"] == "ready":
+                for i in clientes:
+                    if i.getIdFromJid(i.jid) == request.POST["id"]:
+                        info = i.getAll()
+                        #TODO que funcione ingresando user y pass por link
+                        return HttpResponse(json.dumps(info), content_type="application/json")
+            # if request.POST["message"] == "statusMsg":
+            # if request.POST["message"] == "statusMsg":
+            # if request.POST["message"] == "statusMsg":
+            # if request.POST["message"] == "statusMsg":
+        else:
+            region = request.POST["server"]
+            user = request.POST["user"]
+            password = request.POST["password"]
 
     if user != None and password != None and region != None:
         cliente = Cliente(user, password, region)
@@ -66,8 +67,10 @@ def chat(request, user = None, password = None, region = None, friend = None):
             clientes.append(cliente)
             info={
                 #TODO returnear serverStatus
-                "message":"<h1 class='green-text'>Conectando...</h1><p class='center white-text'>Espere mientras se conecta al servidor de Riot Games</p>",
-                "typ":"loginCorrect"
+                "message":"<h1 class='green-text'>Conectando a "+cliente.name+"...</h1><p class='center white-text'>Espere mientras se conecta al servidor de Riot Games</p>",
+                "typ":"loginCorrect",
+                "name":cliente.name,
+                "id":cliente.getIdFromJid(cliente.jid)
                 }
             if request.method == "POST":
                 return HttpResponse(json.dumps(info), content_type="application/json")
