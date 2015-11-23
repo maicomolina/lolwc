@@ -59,7 +59,10 @@ def chat(request, user = None, password = None, region = None, friend = None):
 
     if user != None and password != None and region != None:
         cliente = Cliente(user, password, region)
+        print(cliente.name)
+        print("POS CLIENTE")
         if cliente.connected:
+            print("CLIENTE CONNECTED")
             for i in range(len(clientes)):
                 if clientes[i].jid == cliente.jid:
                     clientes.pop(i)
@@ -69,20 +72,30 @@ def chat(request, user = None, password = None, region = None, friend = None):
                 #TODO returnear serverStatus
                 "message":"<h1 class='green-text'>Conectando a "+cliente.name+"...</h1><p class='center white-text'>Espere mientras se conecta al servidor de Riot Games</p>",
                 "typ":"loginCorrect",
-                "name":cliente.name,
-                "id":cliente.getIdFromJid(cliente.jid)
+                "name":unicode(cliente.name),
+                "id":str(cliente.getIdFromJid(cliente.jid)),
+                "profileIcon":str(cliente.profileIcon),
+                "level":str(cliente.level),
+                "league":str(cliente.rankedLeagueTier).capitalize() + " " + str(cliente.rankedLeagueDivision),
+                "promo":str(cliente.rankedLeagueName),
+                "score":str(cliente.championMasteryScore),
+                "statusMsg":unicode(cliente.statusMsg)
                 }
+
             if request.method == "POST":
+                print("METODO POST RETURN")
                 return HttpResponse(json.dumps(info), content_type="application/json")
             return render_to_response('chat.html', {"info":info}, context)
 
         else:
+            print("ELSE CONNECTED")
             info={
                 #TODO returnear serverStatus
                 "message":"<h1 class='red-text'>No fue posible conectarse</h1><p class='center red-text'>Revisa tu usario y contraseña</p>",
                 "typ":"authError",
                 }
             if request.method == "POST":
+                print("ELSE CONNECTED POST")
                 return HttpResponse(json.dumps(info), content_type="application/json")
             return render_to_response('chat.html', {"info":info}, context)
     else:
