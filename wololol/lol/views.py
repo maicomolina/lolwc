@@ -5,10 +5,8 @@ from django.shortcuts import render
 from django.template import RequestContext
 from django.shortcuts import render_to_response
 from django.http import HttpResponse
-from ovejawatcherFinal import getSummoner
+from ovejawatcherFinal import getSummoner, refreshSummoner
 from chat import Cliente
-###from riotwatcher import getApiSummoner, getCacheSummoner
-
 #ReturnJSON: return HttpResponse(json.dumps(valores), content_type="application/json")
 
 clientes = []
