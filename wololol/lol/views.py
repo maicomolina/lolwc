@@ -82,9 +82,7 @@ def data(request, section = None, specific = None):
 def home(request):
     context = RequestContext(request)
     from random import randint
-    from django.contrib.staticfiles.templatetags.staticfiles import static
     import os
-    url = static('img/home/')
     amount = len(os.listdir("./lol/static/img/home"))
     image = randint(1,amount)
     return render_to_response('home.html',{"homeImage":str(image)}, context)
